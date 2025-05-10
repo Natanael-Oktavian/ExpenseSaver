@@ -11,8 +11,10 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -47,7 +49,9 @@ import com.example.expensesaver.ui.AppViewModelProvider
 import com.example.expensesaver.ui.expense.formatedPrice
 import com.example.expensesaver.ui.navigation.NavigationDestination
 import com.example.expensesaver.ui.theme.ExpenseSaverTheme
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
+import java.util.Currency
 import java.util.Locale
 import java.util.UUID
 
@@ -86,7 +90,8 @@ fun HomeScreen(
                 modifier = Modifier
                     .padding(
                         end = WindowInsets.safeDrawing.asPaddingValues()
-                            .calculateEndPadding(LocalLayoutDirection.current)
+                            .calculateEndPadding(LocalLayoutDirection.current),
+                        bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
                     )
             ) {
                 Icon(
@@ -124,12 +129,37 @@ private fun HomeBody(
                 modifier = Modifier.padding(contentPadding),
             )
         } else {
+            val totalExpense = itemList.sumOf { it.expense.amount }
             ExpenseList(
                 itemList = itemList,
                 onItemClick = { onItemClick(it.expense.expenseId) },
                 contentPadding = contentPadding,
-                modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small))
+                modifier = Modifier.weight(1f).padding(horizontal = dimensionResource(id = R.dimen.padding_small))
             )
+            Row(
+                modifier = Modifier.wrapContentSize().fillMaxWidth()
+                    .padding(
+                        start = 16.dp,
+                        end = 16.dp,
+                        bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()+16.dp
+                    )
+            ) {
+                val locale = Locale("id", "ID")
+                val formatter = NumberFormat.getCurrencyInstance(locale).apply {
+                    maximumFractionDigits = 0 // removes decimals
+                    currency = Currency.getInstance("IDR")
+                }
+                val formatted = formatter.format(totalExpense).replace("Rp", "Rp ")
+                Text(
+                    text = stringResource(R.string.total),
+                    style = MaterialTheme.typography.titleLarge,
+                )
+                Spacer(Modifier.weight(1f))
+                Text(
+                    text = formatted,
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
         }
     }
 }

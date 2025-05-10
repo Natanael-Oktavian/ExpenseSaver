@@ -16,6 +16,7 @@
 
 package com.example.expensesaver.ui.expense
 
+import android.app.DatePickerDialog
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -28,27 +29,32 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.expensesaver.ExpenseTopAppBar
 import com.example.expensesaver.R
 import com.example.expensesaver.ui.AppViewModelProvider
-import com.example.expensesaver.ui.expense.ExpenseEntryViewModel
 import com.example.expensesaver.ui.navigation.NavigationDestination
-import com.example.expensesaver.ui.theme.ExpenseSaverTheme
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Currency
+import java.util.Date
 import java.util.Locale
 
 object ExpenseEntryDestination : NavigationDestination {
@@ -65,6 +71,7 @@ fun ExpenseEntryScreen(
     viewModel: ExpenseEntryViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val coroutineScope = rememberCoroutineScope()
+    //val uiState by viewModel.itemUiState.collectAsState()
     Scaffold(
         topBar = {
             ExpenseTopAppBar(
@@ -160,7 +167,7 @@ fun ItemInputForm(
                 unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
                 disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
             ),
-            leadingIcon = { Text(Currency.getInstance(Locale.getDefault()).symbol) },
+            leadingIcon = { Text(Currency.getInstance(Locale("id", "ID")).symbol) },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true
@@ -178,6 +185,13 @@ fun ItemInputForm(
             enabled = enabled,
             singleLine = true
         )
+
+        DatePickerField(
+            itemDetails = itemDetails,
+            onValueChange = {
+                onValueChange(itemDetails.copy(createdDate = it.createdDate))
+            }
+        )
         if (enabled) {
             Text(
                 text = stringResource(R.string.required_fields),
@@ -187,14 +201,32 @@ fun ItemInputForm(
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-private fun ItemEntryScreenPreview() {
-    ExpenseSaverTheme {
-        ItemEntryBody(itemUiState = ItemUiState(
-            ItemDetails(
-                name = "Item name", amount = "10.00"
-            )
-        ), onItemValueChange = {}, onSaveClick = {})
+fun DatePickerField(
+    itemDetails: ItemDetails,
+    onValueChange: (ItemDetails) -> Unit = {},
+) {
+    val context = LocalContext.current
+    val calendar = Calendar.getInstance()
+    itemDetails.createdDate?.let { calendar.time = it }
+
+    val datePickerDialog = DatePickerDialog(
+        context,
+        { _, year, month, dayOfMonth ->
+            calendar.set(year, month, dayOfMonth)
+            val updatedItemDetails = itemDetails.copy(createdDate = calendar.time)
+            onValueChange(updatedItemDetails)
+        },
+        calendar.get(Calendar.YEAR),
+        calendar.get(Calendar.MONTH),
+        calendar.get(Calendar.DAY_OF_MONTH)
+    )
+
+    val formattedDate = itemDetails.createdDate?.let {
+        SimpleDateFormat("dd MMM yyyy", Locale("id", "ID")).format(it)
+    } ?: "Choose Date"
+
+    OutlinedButton(onClick = { datePickerDialog.show() }) {
+        Text(formattedDate)
     }
 }

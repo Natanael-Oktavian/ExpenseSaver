@@ -28,7 +28,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 import java.text.NumberFormat
+import java.util.Currency
 import java.util.Date
+import java.util.Locale
 import java.util.UUID
 
 /**
@@ -118,7 +120,12 @@ fun ItemDetails.toItem(categoryId:UUID): Expense = Expense(
 )
 
 fun Expense.formatedPrice(): String {
-    return NumberFormat.getCurrencyInstance().format(amount)
+    val locale = Locale("id", "ID")
+    val formatter = NumberFormat.getCurrencyInstance(locale).apply {
+        maximumFractionDigits = 0 // removes decimals
+        currency = Currency.getInstance("IDR")
+    }
+    return formatter.format(amount).replace("Rp", "Rp ")
 }
 
 /**
