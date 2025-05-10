@@ -1,28 +1,25 @@
-/*
- * Copyright (C) 2023 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.example.expensesaver.data
 
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Embedded
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Relation
+import androidx.room.Transaction
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
+
+data class ExpenseWithCategory(
+    @Embedded val expense: Expense,
+
+    @Relation(
+        parentColumn = "categoryId",
+        entityColumn = "categoryId"
+    )
+    val category: ExpenseCategory
+)
 
 /**
  * Database access object to access the Inventory database
@@ -31,15 +28,27 @@ import kotlinx.coroutines.flow.Flow
 interface ExpenseDao {
 
     @Query("SELECT * from expenses ORDER BY createdDate ASC")
-    fun getAllItems(): Flow<List<Expense>>
+    fun getAllExpensesWithCategory(): Flow<List<ExpenseWithCategory>>
+
+    @Query("SELECT * from expenses ORDER BY createdDate ASC")
+    fun getAllExpenses(): Flow<List<Expense>>
 
     @Query("SELECT * from expenses WHERE expenseId = :expenseId")
-    fun getItem(expenseId: Int): Flow<Expense>
+    fun getExpense(expenseId: Int): Flow<Expense>
 
     // Specify the conflict strategy as IGNORE, when the user tries to add an
     // existing Item into the database Room ignores the conflict.
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(item: Expense)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertCategory(item: ExpenseCategory)
+
+    @Transaction
+    suspend fun insertCategoryWithExpense(category: ExpenseCategory, expense: Expense) {
+        insertCategory(category)
+        insert(expense)
+    }
 
     @Update
     suspend fun update(item: Expense)

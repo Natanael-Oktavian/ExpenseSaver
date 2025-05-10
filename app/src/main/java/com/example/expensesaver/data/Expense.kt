@@ -16,16 +16,16 @@ import java.util.UUID
         ForeignKey(
             entity = ExpenseCategory::class,
             parentColumns = ["categoryId"],
-            childColumns = ["expenseId"],
+            childColumns = ["categoryId"],
             onDelete = ForeignKey.CASCADE
         )
     ],
-    indices = [Index(value = ["authorId"])]
+    indices = [Index(value = ["categoryId"])]
 )
 data class Expense(
     @PrimaryKey
     val expenseId: UUID,
-    val categoryId: Int, // foreign key referencing User.userId
+    val categoryId: UUID, // foreign key referencing User.userId
     val name: String,
     val amount: Double,
     val createdBy: String,

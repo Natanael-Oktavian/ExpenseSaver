@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2023 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.example.expensesaver.data
 
 import androidx.room.Dao
@@ -31,13 +15,13 @@ import kotlinx.coroutines.flow.Flow
 interface ExpenseCategoryDao {
 
     @Query("SELECT * from expense_categories ORDER BY name ASC")
-    fun getAllItems(): Flow<List<ExpenseCategory>>
+    fun getAllCategories(): Flow<List<ExpenseCategory>>
 
     // Specify the conflict strategy as IGNORE, when the user tries to add an
     // existing Item into the database Room ignores the conflict.
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(item: Expense)
+    suspend fun insert(item: ExpenseCategory)
 
     @Delete
-    suspend fun delete(item: Expense)
+    suspend fun delete(item: ExpenseCategory)
 }
