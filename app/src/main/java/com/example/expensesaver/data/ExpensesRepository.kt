@@ -1,6 +1,7 @@
 package com.example.expensesaver.data
 
 import kotlinx.coroutines.flow.Flow
+import java.util.UUID
 
 /**
  * Repository that provides insert, update, delete, and retrieve of [Expense] from a given data source.
@@ -17,7 +18,7 @@ interface ExpensesRepository {
     /**
      * Retrieve an expense from the given data source that matches with the [id].
      */
-    fun getExpenseStream(id: Int): Flow<Expense?>
+    fun getExpenseStream(id: UUID): Flow<Expense?>
 
     /**
      * Insert item in the data source

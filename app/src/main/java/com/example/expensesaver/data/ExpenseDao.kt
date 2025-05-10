@@ -10,6 +10,7 @@ import androidx.room.Relation
 import androidx.room.Transaction
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
+import java.util.UUID
 
 data class ExpenseWithCategory(
     @Embedded val expense: Expense,
@@ -34,7 +35,7 @@ interface ExpenseDao {
     fun getAllExpenses(): Flow<List<Expense>>
 
     @Query("SELECT * from expenses WHERE expenseId = :expenseId")
-    fun getExpense(expenseId: Int): Flow<Expense>
+    fun getExpense(expenseId: UUID): Flow<Expense>
 
     // Specify the conflict strategy as IGNORE, when the user tries to add an
     // existing Item into the database Room ignores the conflict.

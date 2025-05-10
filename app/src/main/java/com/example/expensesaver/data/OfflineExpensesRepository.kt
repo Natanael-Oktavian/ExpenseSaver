@@ -1,13 +1,14 @@
 package com.example.expensesaver.data
 
 import kotlinx.coroutines.flow.Flow
+import java.util.UUID
 
 class OfflineExpensesRepository(private val itemDao: ExpenseDao) : ExpensesRepository {
     override fun getAllExpensesWithCategoryStream(): Flow<List<ExpenseWithCategory>> = itemDao.getAllExpensesWithCategory()
 
     override fun getAllExpensesStream(): Flow<List<Expense>> = itemDao.getAllExpenses()
 
-    override fun getExpenseStream(id: Int): Flow<Expense?> = itemDao.getExpense(id)
+    override fun getExpenseStream(id: UUID): Flow<Expense?> = itemDao.getExpense(id)
 
     override suspend fun insertItem(expense: Expense) = itemDao.insert(expense)
 

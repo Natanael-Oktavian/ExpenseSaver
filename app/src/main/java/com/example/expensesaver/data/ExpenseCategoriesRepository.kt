@@ -10,6 +10,9 @@ interface ExpenseCategoriesRepository {
      * Retrieve all the expense from the the given data source.
      */
     fun getAllCategoriesStream(): Flow<List<ExpenseCategory>>
+
+    fun getCategoryByNameStream(name : String): Flow<ExpenseCategory>
+
     /**
      * Insert item in the data source
      */

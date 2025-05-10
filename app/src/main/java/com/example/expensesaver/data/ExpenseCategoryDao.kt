@@ -17,6 +17,9 @@ interface ExpenseCategoryDao {
     @Query("SELECT * from expense_categories ORDER BY name ASC")
     fun getAllCategories(): Flow<List<ExpenseCategory>>
 
+    @Query("SELECT * from expense_categories where name =:name")
+    fun getCategoryByName(name: String): Flow<ExpenseCategory>
+
     // Specify the conflict strategy as IGNORE, when the user tries to add an
     // existing Item into the database Room ignores the conflict.
     @Insert(onConflict = OnConflictStrategy.IGNORE)

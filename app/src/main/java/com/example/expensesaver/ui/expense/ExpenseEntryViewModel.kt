@@ -25,6 +25,7 @@ import com.example.expensesaver.data.ExpenseCategoriesRepository
 import com.example.expensesaver.data.ExpenseCategory
 import com.example.expensesaver.data.ExpensesRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 import java.text.NumberFormat
 import java.util.Date
@@ -56,16 +57,21 @@ class ExpenseEntryViewModel(private val expenseRepository: ExpensesRepository,pr
     suspend fun saveItem() {
         if (validateInput()) {
             withContext(Dispatchers.IO) {
-                val categoryId = UUID.randomUUID()
-                val expenseCategory = ExpenseCategory(
-                    categoryId = categoryId,
-                    name = itemUiState.itemDetails.categoryName,
-                    createdBy = "System",
-                    createdDate = Date(),
-                    isDeleted = false
-                )
+                var exisingCategory = expenseCategoryRepository.getCategoryByNameStream(itemUiState.itemDetails.categoryName).firstOrNull()
+
+                val categoryId = exisingCategory?.categoryId ?: UUID.randomUUID()
+                if(exisingCategory==null) {
+                    val expenseCategory = ExpenseCategory(
+                        categoryId = categoryId,
+                        name = itemUiState.itemDetails.categoryName,
+                        createdBy = "System",
+                        createdDate = Date(),
+                        isDeleted = false
+                    )
+                    expenseCategoryRepository.insertCategory(expenseCategory)
+                }
                 val expense = itemUiState.itemDetails.toItem(categoryId)
-                expenseRepository.insertCategoryWithExpense(expenseCategory,expense)
+                expenseRepository.insertItem(expense)
             }
         }
     }
