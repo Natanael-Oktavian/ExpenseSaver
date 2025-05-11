@@ -23,6 +23,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.expensesaver.ui.expense.ExpenseEditDestination
+import com.example.expensesaver.ui.expense.ExpenseEditScreen
 import com.example.expensesaver.ui.home.HomeDestination
 import com.example.expensesaver.ui.home.HomeScreen
 import com.example.expensesaver.ui.expense.ExpenseEntryDestination
@@ -45,7 +47,7 @@ fun ExpenseNavHost(
             HomeScreen(
                 navigateToItemEntry = { navController.navigate(ExpenseEntryDestination.route) },
                 navigateToItemUpdate = {
-                    /*navController.navigate("${ItemDetailsDestination.route}/${it}")*/
+                    navController.navigate("${ExpenseEditDestination.route}/${it}")
                 }
             )
         }
@@ -55,27 +57,16 @@ fun ExpenseNavHost(
                 onNavigateUp = { navController.navigateUp() }
             )
         }
-//        composable(
-//            route = ItemDetailsDestination.routeWithArgs,
-//            arguments = listOf(navArgument(ItemDetailsDestination.itemIdArg) {
-//                type = NavType.IntType
-//            })
-//        ) {
-//            ItemDetailsScreen(
-//                navigateToEditItem = { navController.navigate("${ItemEditDestination.route}/$it") },
-//                navigateBack = { navController.navigateUp() }
-//            )
-//        }
-//        composable(
-//            route = ItemEditDestination.routeWithArgs,
-//            arguments = listOf(navArgument(ItemEditDestination.itemIdArg) {
-//                type = NavType.IntType
-//            })
-//        ) {
-//            ItemEditScreen(
-//                navigateBack = { navController.popBackStack() },
-//                onNavigateUp = { navController.navigateUp() }
-//            )
-//        }
+        composable(
+            route = ExpenseEditDestination.routeWithArgs,
+            arguments = listOf(navArgument(ExpenseEditDestination.itemIdArg) {
+                type = NavType.StringType
+            })
+        ) {
+            ExpenseEditScreen(
+                navigateBack = { navController.popBackStack() },
+                onNavigateUp = { navController.navigateUp() }
+            )
+        }
     }
 }

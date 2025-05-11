@@ -10,4 +10,5 @@
     <string name="item_category_req">Category*</string>
     <string name="required_fields">*required fields</string>
     <string name="total">Total</string>
+    <string name="edit_expense_title">Edit Expense</string>
 </resources>

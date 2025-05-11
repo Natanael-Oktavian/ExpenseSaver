@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
+import java.util.UUID
 
 /**
  * Database access object to access the Inventory database
@@ -19,6 +20,9 @@ interface ExpenseCategoryDao {
 
     @Query("SELECT * from expense_categories where name =:name")
     fun getCategoryByName(name: String): Flow<ExpenseCategory>
+
+    @Query("SELECT * from expense_categories WHERE categoryId = :categoryId")
+    fun getCategory(categoryId: UUID): Flow<ExpenseCategory>
 
     // Specify the conflict strategy as IGNORE, when the user tries to add an
     // existing Item into the database Room ignores the conflict.

@@ -101,7 +101,7 @@ data class ItemDetails(
     val createdBy: String="",
     val createdDate: Date=Date(),
     val isDeleted: Boolean=false,
-    val categoryName: String=""
+    var categoryName: String=""
 )
 
 /**
@@ -110,6 +110,16 @@ data class ItemDetails(
  * [ItemUiState] is not a valid [Int], then the quantity will be set to 0
  */
 fun ItemDetails.toItem(categoryId:UUID): Expense = Expense(
+    expenseId = expenseId,
+    categoryId = categoryId,
+    name = name,
+    amount = amount.toDoubleOrNull() ?: 0.0,
+    createdBy = createdBy,
+    createdDate = createdDate,
+    isDeleted = isDeleted,
+)
+
+fun ItemDetails.toItem(): Expense = Expense(
     expenseId = expenseId,
     categoryId = categoryId,
     name = name,

@@ -2,10 +2,12 @@ package com.example.expensesaver.ui
 
 import android.app.Application
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.expensesaver.ExpenseApplication
+import com.example.expensesaver.ui.expense.ExpenseEditViewModel
 import com.example.expensesaver.ui.home.HomeViewModel
 import com.example.expensesaver.ui.expense.ExpenseEntryViewModel
 
@@ -14,8 +16,14 @@ import com.example.expensesaver.ui.expense.ExpenseEntryViewModel
  */
 object AppViewModelProvider {
     val Factory = viewModelFactory {
-
-        // Initializer for ItemEntryViewModel
+        // Initializer for ItemEditViewModel
+        initializer {
+            ExpenseEditViewModel(
+                this.createSavedStateHandle(),
+                expenseApplication().container.expenseRepository,expenseApplication().container.expenseCategoryRepository
+            )
+        }
+        // Initializer for ExpenseEntryViewModel
         initializer {
             ExpenseEntryViewModel(expenseApplication().container.expenseRepository,expenseApplication().container.expenseCategoryRepository)
         }
