@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">ExpenseSaver</string>
     <string name="back_button">Back</string>
-    <string name="no_item_description">Oops!\nNo items in the inventory.\nTap + to add.</string>
-    <string name="item_entry_title">Add Item</string>
+    <string name="no_item_description">Tap + to add your expense.</string>
+    <string name="item_entry_title">Add Expense</string>
     <string name="save_action">Save</string>
     <string name="item_detail_title">Item Details</string>
     <string name="item_name_req">Item Name*</string>
