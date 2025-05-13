@@ -9,7 +9,7 @@ You can **add**, **edit**, and **view expenses grouped by date**, along with a r
 
 - ✅ Add and edit expenses with category, amount, and date.
 - 📆 Expenses are grouped by date.
-- 💰 See your total expense per day.
+- 💰 See your total expense.
 - 🧹 Simple and clean UI using Jetpack Compose.
 
 ---
