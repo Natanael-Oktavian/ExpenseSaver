@@ -172,15 +172,36 @@ private fun ExpenseList(
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
+    val groupedItems: Map<String, List<ExpenseWithCategory>> =
+        itemList.groupBy { expense ->
+            SimpleDateFormat("dd MMM yyyy", Locale("id", "ID")).format(expense.expense.createdDate)
+        }
     LazyColumn(
         modifier = modifier,
         contentPadding = contentPadding
     ) {
-        items(items = itemList, key = { it.expense.expenseId }) { item ->
-            ExpenseItem(item = item,
-                modifier = Modifier
-                    .padding(dimensionResource(id = R.dimen.padding_small))
-                    .clickable { onItemClick(item) })
+        groupedItems.forEach { (date, items) ->
+            // Group header
+            item(key = "header-$date") {
+                Text(
+                    text = date,
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+            }
+
+            // Grouped items with stable keys
+            items(
+                items = items,
+                key = { it.expense.expenseId } // ✅ keep unique key
+            ) { item ->
+                ExpenseItem(
+                    item = item,
+                    modifier = Modifier
+                        .padding(dimensionResource(id = R.dimen.padding_small))
+                        .clickable { onItemClick(item) }
+                )
+            }
         }
     }
 }
