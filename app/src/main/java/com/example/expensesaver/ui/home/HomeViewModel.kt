@@ -21,8 +21,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.expensesaver.data.Expense
 import com.example.expensesaver.data.ExpenseWithCategory
 import com.example.expensesaver.data.ExpensesRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
@@ -36,7 +38,7 @@ class HomeViewModel(expensesRepository: ExpensesRepository) : ViewModel() {
      * [HomeUiState]
      */
     val homeUiState: StateFlow<HomeUiState> =
-        expensesRepository.getAllExpensesWithCategoryStream().map { HomeUiState(it) }
+        expensesRepository.getAllExpensesWithCategoryStream().map { HomeUiState(it) }.flowOn(Dispatchers.IO)
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
