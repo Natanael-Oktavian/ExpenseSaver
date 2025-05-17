@@ -148,9 +148,8 @@ private fun HomeBody(
                 val locale = Locale("id", "ID")
                 val formatter = NumberFormat.getCurrencyInstance(locale).apply {
                     maximumFractionDigits = 0 // removes decimals
-                    currency = Currency.getInstance("IDR")
                 }
-                val formatted = formatter.format(totalExpense).replace("Rp", "Rp ")
+                val formatted = formatter.format(totalExpense).replace("Rp", "")
                 Text(
                     text = stringResource(R.string.total),
                     style = MaterialTheme.typography.titleLarge,
@@ -217,12 +216,6 @@ private fun ExpenseItem(
             modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_large)),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_small))
         ) {
-            val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val formatted = formatter.format(item.expense.createdDate)
-            Text(
-                text = formatted,
-                style = MaterialTheme.typography.titleMedium
-            )
             Row(
                 modifier = Modifier.fillMaxWidth()
             ) {

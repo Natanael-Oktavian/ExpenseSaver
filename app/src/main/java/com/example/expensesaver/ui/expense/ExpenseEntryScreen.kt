@@ -167,7 +167,6 @@ fun ItemInputForm(
                 unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
                 disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
             ),
-            leadingIcon = { Text(Currency.getInstance(Locale("id", "ID")).symbol) },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true

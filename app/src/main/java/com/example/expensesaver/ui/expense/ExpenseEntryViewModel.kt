@@ -133,9 +133,8 @@ fun Expense.formatedPrice(): String {
     val locale = Locale("id", "ID")
     val formatter = NumberFormat.getCurrencyInstance(locale).apply {
         maximumFractionDigits = 0 // removes decimals
-        currency = Currency.getInstance("IDR")
     }
-    return formatter.format(amount).replace("Rp", "Rp ")
+    return formatter.format(amount).replace("Rp", "")
 }
 
 /**
