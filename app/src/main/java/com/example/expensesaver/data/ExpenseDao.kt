@@ -10,6 +10,7 @@ import androidx.room.Relation
 import androidx.room.Transaction
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
+import java.util.Date
 import java.util.UUID
 
 data class ExpenseWithCategory(
@@ -28,8 +29,12 @@ data class ExpenseWithCategory(
 @Dao
 interface ExpenseDao {
 
-    @Query("SELECT * from expenses ORDER BY createdDate ASC")
-    fun getAllExpensesWithCategory(): Flow<List<ExpenseWithCategory>>
+    @Query("""
+    SELECT * FROM expenses 
+    WHERE (:startDate IS NULL OR createdDate >= :startDate) 
+      AND (:endDate IS NULL OR createdDate <= :endDate)
+""")
+    fun getAllExpensesWithCategory(startDate: Date?, endDate: Date?): Flow<List<ExpenseWithCategory>>
 
     @Query("SELECT * from expenses ORDER BY createdDate ASC")
     fun getAllExpenses(): Flow<List<Expense>>

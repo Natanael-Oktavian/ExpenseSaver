@@ -81,7 +81,8 @@ fun HomeScreen(
             ExpenseTopAppBar(
                 title = stringResource(HomeDestination.titleRes),
                 canNavigateBack = false,
-                scrollBehavior = scrollBehavior
+                scrollBehavior = scrollBehavior,
+                onDateSelected = { viewModel.onDateSelected(it) }
             )
         },
         floatingActionButton = {

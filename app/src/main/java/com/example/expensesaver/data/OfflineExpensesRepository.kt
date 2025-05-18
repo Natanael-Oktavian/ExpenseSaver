@@ -1,10 +1,11 @@
 package com.example.expensesaver.data
 
 import kotlinx.coroutines.flow.Flow
+import java.util.Date
 import java.util.UUID
 
 class OfflineExpensesRepository(private val itemDao: ExpenseDao) : ExpensesRepository {
-    override fun getAllExpensesWithCategoryStream(): Flow<List<ExpenseWithCategory>> = itemDao.getAllExpensesWithCategory()
+    override fun getAllExpensesWithCategoryStream(startDate: Date?, endDate: Date?): Flow<List<ExpenseWithCategory>> = itemDao.getAllExpensesWithCategory(startDate,endDate)
 
     override fun getAllExpensesStream(): Flow<List<Expense>> = itemDao.getAllExpenses()
 

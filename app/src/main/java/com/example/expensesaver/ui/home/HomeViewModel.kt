@@ -21,32 +21,49 @@ import androidx.lifecycle.viewModelScope
 import com.example.expensesaver.data.Expense
 import com.example.expensesaver.data.ExpenseWithCategory
 import com.example.expensesaver.data.ExpensesRepository
+import com.example.expensesaver.data.FilterData
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import java.util.Date
 
 /**
  * ViewModel to retrieve all items in the Room database.
  */
 class HomeViewModel(expensesRepository: ExpensesRepository) : ViewModel() {
+    private val _selectedStartDate = MutableStateFlow<Date?>(null)
+    private val _selectedEndDate = MutableStateFlow<Date?>(null)
 
-    /**
-     * Holds home ui state. The list of items are retrieved from [ExpensesRepository] and mapped to
-     * [HomeUiState]
-     */
-    val homeUiState: StateFlow<HomeUiState> =
-        expensesRepository.getAllExpensesWithCategoryStream().map { HomeUiState(it) }.flowOn(Dispatchers.IO)
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-                initialValue = HomeUiState()
-            )
+    val homeUiState: StateFlow<HomeUiState> = combine(
+        _selectedStartDate,
+        _selectedEndDate
+    ) { start, end ->
+        start to end
+    }.flatMapLatest { (start, end) ->
+        expensesRepository.getAllExpensesWithCategoryStream(start, end)
+    }.map { list ->
+        HomeUiState(list)
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+        initialValue = HomeUiState()
+    )
 
     companion object {
         private const val TIMEOUT_MILLIS = 1_000L
+    }
+
+    fun onDateSelected(date: FilterData) {
+        if(date.endDate>=date.startDate){
+            _selectedStartDate.value = date.startDate
+            _selectedEndDate.value = date.endDate
+        }
     }
 }
 

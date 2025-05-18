@@ -1,6 +1,7 @@
 package com.example.expensesaver.data
 
 import kotlinx.coroutines.flow.Flow
+import java.util.Date
 import java.util.UUID
 
 /**
@@ -8,7 +9,7 @@ import java.util.UUID
  */
 interface ExpensesRepository {
 
-    fun getAllExpensesWithCategoryStream(): Flow<List<ExpenseWithCategory>>
+    fun getAllExpensesWithCategoryStream(startDate: Date?, endDate: Date?): Flow<List<ExpenseWithCategory>>
 
     /**
      * Retrieve all the expense from the the given data source.
