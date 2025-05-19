@@ -1,0 +1,64 @@
+package natanael.oktavian.expensesaver.data
+
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Embedded
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Relation
+import androidx.room.Transaction
+import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
+import java.util.Date
+import java.util.UUID
+
+data class ExpenseWithCategory(
+    @Embedded val expense: Expense,
+
+    @Relation(
+        parentColumn = "categoryId",
+        entityColumn = "categoryId"
+    )
+    val category: ExpenseCategory
+)
+
+/**
+ * Database access object to access the Inventory database
+ */
+@Dao
+interface ExpenseDao {
+
+    @Query("""
+    SELECT * FROM expenses 
+    WHERE (:startDate IS NULL OR createdDate >= :startDate) 
+      AND (:endDate IS NULL OR createdDate <= :endDate)
+""")
+    fun getAllExpensesWithCategory(startDate: Date?, endDate: Date?): Flow<List<ExpenseWithCategory>>
+
+    @Query("SELECT * from expenses ORDER BY createdDate ASC")
+    fun getAllExpenses(): Flow<List<Expense>>
+
+    @Query("SELECT * from expenses WHERE expenseId = :expenseId")
+    fun getExpense(expenseId: UUID): Flow<Expense>
+
+    // Specify the conflict strategy as IGNORE, when the user tries to add an
+    // existing Item into the database Room ignores the conflict.
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insert(item: Expense)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertCategory(item: ExpenseCategory)
+
+    @Transaction
+    suspend fun insertCategoryWithExpense(category: ExpenseCategory, expense: Expense) {
+        insertCategory(category)
+        insert(expense)
+    }
+
+    @Update
+    suspend fun update(item: Expense)
+
+    @Delete
+    suspend fun delete(item: Expense)
+}

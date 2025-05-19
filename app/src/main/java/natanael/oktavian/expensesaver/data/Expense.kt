@@ -1,0 +1,34 @@
+package natanael.oktavian.expensesaver.data
+
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Index
+import androidx.room.PrimaryKey
+import java.util.Date
+import java.util.UUID
+
+/**
+ * Entity data class represents a single row in the database.
+ */
+@Entity(
+    tableName = "expenses",
+    foreignKeys = [
+        ForeignKey(
+            entity = ExpenseCategory::class,
+            parentColumns = ["categoryId"],
+            childColumns = ["categoryId"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ],
+    indices = [Index(value = ["categoryId"])]
+)
+data class Expense(
+    @PrimaryKey
+    val expenseId: UUID,
+    val categoryId: UUID, // foreign key referencing User.userId
+    val name: String,
+    val amount: Double,
+    val createdBy: String,
+    val createdDate: Date,
+    val isDeleted: Boolean
+)

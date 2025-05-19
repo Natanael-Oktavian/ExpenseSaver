@@ -27,7 +27,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.expensesaver"
+        applicationId = "natanael.oktavian.expensesaver"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
@@ -63,7 +63,7 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-    namespace = "com.example.expensesaver"
+    namespace = "natanael.oktavian.expensesaver"
 }
 
 dependencies {
